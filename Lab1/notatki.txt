@@ -1,0 +1,8 @@
+Ważne rzeczy, które warto wiedzieć o danych
+1. Linie są od 5 do 24. Nie ma linii nocnych (mimo, że są autobusy nocne). Możemy więc założyć, że podróż nie będzie trwała więcej niż 1 dzień i że możemy przefiltrować wszystkie odjazdy przed czasem odjazdu
+2. Trzeba pamiętać, że możemy dojść do punktu z którego może nie być odwrotu. Co wtedy? - tutaj się nie martwić
+3. Warto pomyśleć o tym, żeby:
+a) Nagradzać niezmianę linii jeżeli zajdzie taka potrzeba
+b) Dynamiczne generowanie kolejnych punktów
+c) Niezawracanie (bo po co?) - po prostu nie cofamy się o przystanek
+
