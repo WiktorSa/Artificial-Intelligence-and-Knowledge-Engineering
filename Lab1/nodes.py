@@ -37,6 +37,10 @@ class Node:
             text += str(edge)
             text += "\n"
         return text
+    
+    # Filler method - only used to avoid heapq crash
+    def __gt__(self, other):
+        return True
 
     class Edge:
         def __init__(self, line, depart_time, arr_time, start_stop, end_stop):
