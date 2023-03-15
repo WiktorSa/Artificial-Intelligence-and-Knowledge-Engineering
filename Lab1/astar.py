@@ -2,15 +2,28 @@ import heapq
 import math
 
 
-def astar(start, goal, neighbors_fn, heuristic_fn):
-    front = [(0, start)]
-    came_from = {start: None}
-    cost_so_far = {start: 0}
+class Graph:
+    def __init__(self):
+        self.graph_dict = {}
+
+    def add_edges(self, node):
+        # We only make path in one way because path in another way is not the same!
+        for edge in node.edges:
+            if edge.start_stop in self.graph_dict:
+                self.graph_dict[edge.start_stop].append(edge)
+            else:
+                self.graph_dict[edge.start_stop] = [edge]
+
+
+def astar(start_node, end_stop, neighbors_fn, heuristic_fn):
+    front = [(0, start_node)]
+    came_from = {start_node: None}
+    cost_so_far = {start_node.stop: 0}
 
     while front:
         _, current = heapq.heappop(front)
 
-        if current == goal:
+        if current.stop == end_stop:
             break
 
         for neighbor in neighbors_fn(current):
@@ -31,86 +44,22 @@ def astar(start, goal, neighbors_fn, heuristic_fn):
 
     return path, cost_so_far[goal]
 
+# Find the final node based on the end_stop
+def find_last_node(prev_nodes, end_stop):
+    for node in prev_nodes:
+        if node.stop == end_stop:
+            return node
 
-def manhattan_distance(a, b):
-    return sum([abs(x - y) for x, y in zip(a, b)])
+def get_shortest_path_astar(start_node, end_stop):
+    graph = Graph()
+    distances, prev_nodes = astar(start_node, end_stop, graph)
 
+    path = []
+    curr_node = find_last_node(prev_nodes, end_stop)
+    while curr_node:
+        path.append(curr_node)
+        curr_node = prev_nodes[curr_node]
+    path.reverse()
 
-def euclidean_distance(a, b):
-    return math.sqrt(sum([(x - y) ** 2 for x, y in zip(a, b)]))
+    return distances[end_stop], path
 
-
-def towncenter_distance(a, b):
-    return euclidean_distance(a, (0, 0, 0, 0, 0, 0, 0)) + euclidean_distance((0, 0, 0, 0, 0, 0, 0), b)
-
-
-def unidimensional_distance(a, b):
-    return max([abs(x - y) for x, y in zip(a, b)])
-
-
-def cosine_distance(a, b):
-    dot_product = sum(x * y for x, y in zip(a, b))
-    magnitude_a = math.sqrt(sum(x ** 2 for x in a))
-    magnitude_b = math.sqrt(sum(x ** 2 for x in b))
-    return 1 - (dot_product / (magnitude_a * magnitude_b))
-
-
-def chebyshev_distance(a, b):
-    return max(abs(x - y) for x, y in zip(a, b))
-
-
-if __name__ == '__main__':
-    graph = {
-        (0, 0, 0, 0, 0, 0, 0): [(1, 1, 1, 1, 1, 1, 1), (1, 2, 3, 4, 5, 6, 7), (4, 5, 6, 7, 8, 9, 10),
-                                (5, 6, 7, 8, 6, 5, 1)],
-        (1, 2, 3, 4, 5, 6, 7): [(2, 3, 4, 5, 6, 7, 8), (1, 1, 1, 1, 1, 1, 1), (5, 2, 1, 4, 1, 3, 1)],
-        (2, 3, 4, 5, 6, 7, 8): [(3, 4, 5, 6, 7, 8, 9), (2, 4, 2, 1, 4, 1, 8), (1, 2, 3, 4, 5, 6, 7),
-                                (5, 6, 7, 8, 6, 5, 1), (6, 6, 10, 2, 2, 5, 10), (9, 3, 2, 7, 0, 0, 1),
-                                (9, 9, 2, 0, 2, 1, 9)],
-        (3, 4, 5, 6, 7, 8, 9): [(4, 5, 6, 7, 8, 9, 10)],
-        (4, 5, 6, 7, 8, 9, 10): [],
-        (1, 1, 1, 1, 1, 1, 1): [(2, 2, 2, 2, 2, 2, 2), (5, 2, 1, 4, 1, 3, 1), (6, 6, 10, 2, 2, 5, 10),
-                                (10, 10, 10, 10, 10, 10, 10)],
-        (2, 2, 2, 2, 2, 2, 2): [],
-        (5, 2, 1, 4, 1, 3, 1): [(2, 2, 2, 2, 2, 2, 2), (2, 0, 2, 0, 2, 0, 2), (2, 4, 2, 1, 4, 1, 8),
-                                (3, 4, 5, 6, 7, 8, 9), (9, 9, 2, 0, 2, 1, 9)],
-        (2, 0, 2, 0, 2, 0, 2): [],
-        (2, 2, 2, 2, 2, 2, 2): [(2, 3, 4, 5, 6, 7, 8), (2, 2, 2, 2, 2, 2, 2), (4, 5, 6, 7, 8, 9, 10),
-                                (5, 6, 7, 8, 6, 5, 1), (10, 10, 10, 10, 10, 10, 10)],
-        (3, 3, 2, 0, 1, 0, 1): [(1, 2, 3, 4, 5, 6, 7), (2, 2, 2, 2, 2, 2, 2), (2, 3, 4, 5, 6, 7, 8),
-                                (5, 2, 1, 4, 1, 3, 1), (2, 0, 2, 0, 2, 0, 2), (6, 6, 10, 2, 2, 5, 10),
-                                (2, 2, 2, 2, 2, 2, 2)],
-        (5, 6, 7, 8, 6, 5, 1): [(2, 0, 2, 0, 2, 0, 2), (3, 4, 5, 6, 7, 8, 9)],
-        (6, 6, 10, 2, 2, 5, 10): [(2, 0, 2, 0, 2, 0, 2), (1, 1, 1, 1, 1, 1, 1)],
-        (2, 4, 2, 1, 4, 1, 8): [(1, 2, 3, 4, 5, 6, 7), (5, 2, 1, 4, 1, 3, 1), (2, 0, 2, 0, 2, 0, 2)],
-        (9, 3, 2, 7, 0, 0, 1): [(5, 2, 1, 4, 1, 3, 1), (10, 10, 10, 10, 10, 10, 10)],
-        (9, 9, 2, 0, 2, 1, 9): [(2, 0, 2, 0, 2, 0, 2), (10, 10, 10, 10, 10, 10, 10)],
-        (10, 10, 10, 10, 10, 10, 10): [(2, 0, 2, 0, 2, 0, 2), (3, 4, 5, 6, 7, 8, 9)]
-    }
-
-    start = (1, 2, 3, 4, 5, 6, 7)
-    goal = (10, 10, 10, 10, 10, 10, 10)
-
-    path, cost = astar(start, goal, lambda node: graph[node], lambda a, b: manhattan_distance(a, b))
-    print(f"Path using Manhattan distance heuristic: {path}")
-    print(f"Cost using Manhattan distance heuristic: {cost}")
-
-    path, cost = astar(start, goal, lambda node: graph[node], lambda a, b: euclidean_distance(a, b))
-    print(f"Path using Euclid's distance heuristic: {path}")
-    print(f"Cost using Euclid's distance heuristic: {cost}")
-
-    path, cost = astar(start, goal, lambda node: graph[node], lambda a, b: towncenter_distance(a, b))
-    print(f"Path using Towncenter distance heuristic: {path}")
-    print(f"Cost using Towncenter distance heuristic: {cost}")
-
-    path, cost = astar(start, goal, lambda node: graph[node], lambda a, b: unidimensional_distance(a, b))
-    print(f"Path using unidimensional distance heuristic: {path}")
-    print(f"Cost using unidimensional distance heuristic: {cost}")
-
-    path, cost = astar(start, goal, lambda node: graph[node], lambda a, b: cosine_distance(a, b))
-    print(f"Path using cosine distance heuristic: {path}")
-    print(f"Cost using cosine distance heuristic: {cost}")
-
-    path, cost = astar(start, goal, lambda node: graph[node], lambda a, b: chebyshev_distance(a, b))
-    print(f"Path using Chebyshev distance heuristic: {path}")
-    print(f"Cost using Chebyshev distance heuristic: {cost}")

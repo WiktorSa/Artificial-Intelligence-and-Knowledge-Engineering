@@ -2,6 +2,7 @@ import heapq
 from collections import defaultdict
 
 from nodes import Node
+from utils import convert_to_seconds
 
 class Graph:
     def __init__(self):
@@ -17,9 +18,6 @@ class Graph:
                 self.graph_dict[edge.start_stop].append((edge, weight))
             else:
                 self.graph_dict[edge.start_stop] = [(edge, weight)]
-    
-def convert_to_seconds(time):
-    return (time.hour * 60 + time.minute) * 60 + time.second
 
 
 def dijkstra(graph, start_node):
@@ -38,7 +36,7 @@ def dijkstra(graph, start_node):
         if curr_dist > distances[curr_node.stop]:
             continue
         
-        # Avoid crashing when there is no connection from given node
+        # Avoid crashing when there are no connections from given node
         if curr_node.stop in graph.graph_dict:
             for edge, weight in graph.graph_dict[curr_node.stop]:
                 new_dist = curr_dist + weight
