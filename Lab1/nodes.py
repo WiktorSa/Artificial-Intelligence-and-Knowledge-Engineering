@@ -22,7 +22,7 @@ class Node:
             # If time is a criteria than we only take connections that will take us the fastest from one stop to another
             if optimalization_criteria == 't':
                 df = df.drop_duplicates(subset=['end_stop'])
-            # TO DO - optimalize for lines
+            # If number of connections is a criteria than we take the best connection with every line available
             elif optimalization_criteria == 's':
                 df = df.drop_duplicates(subset=['line', 'end_stop'])
 

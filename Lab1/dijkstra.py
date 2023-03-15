@@ -8,16 +8,16 @@ class Graph:
     def __init__(self):
         self.graph_dict = {}
 
-    def add_edges(self, node):
+    def add_neighbour_nodes(self, node):
         # We only make path in one way because path in another way is not the same!
         for edge in node.edges:
             # Weight is the number of seconds it takes from going from one stop to another
             weight = convert_to_seconds(edge.arr_time) - convert_to_seconds(node.arr_time)
 
             if edge.start_stop in self.graph_dict:
-                self.graph_dict[edge.start_stop].append((edge, weight))
+                self.graph_dict[edge.start_stop].append((Node(edge.end_stop, edge.arr_time), weight))
             else:
-                self.graph_dict[edge.start_stop] = [(edge, weight)]
+                self.graph_dict[edge.start_stop] = [(Node(edge.end_stop, edge.arr_time), weight)]
 
 
 def dijkstra(graph, start_node):
@@ -31,18 +31,17 @@ def dijkstra(graph, start_node):
 
         # Add dynamically new nodes to the graph
         curr_node.generate_edges()
-        graph.add_edges(curr_node)
+        graph.add_neighbour_nodes(curr_node)
 
         if curr_dist > distances[curr_node.stop]:
             continue
         
-        # Avoid crashing when there are no connections from given node
+        # Avoid crash when arriving to Zorawina
         if curr_node.stop in graph.graph_dict:
-            for edge, weight in graph.graph_dict[curr_node.stop]:
+            for neighbour, weight in graph.graph_dict[curr_node.stop]:
                 new_dist = curr_dist + weight
-                if new_dist < distances[edge.end_stop]:
-                    distances[edge.end_stop] = new_dist
-                    neighbour = Node(edge.end_stop, edge.arr_time)
+                if new_dist < distances[neighbour.stop]:
+                    distances[neighbour.stop] = new_dist
                     prev_nodes[neighbour] = curr_node
                     heapq.heappush(pq, (new_dist, neighbour))
                 

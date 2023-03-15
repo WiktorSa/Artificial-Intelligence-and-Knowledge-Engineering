@@ -1,4 +1,4 @@
-def print_results(start_stop, arrival_time, path, time, end_stop):
+def print_results(start_stop, arrival_time, path, end_stop):
     edges = get_edges(path)
     connections = get_connections(edges)
     cur_arr_time = arrival_time
@@ -11,7 +11,6 @@ def print_results(start_stop, arrival_time, path, time, end_stop):
         cur_arr_time = connection.arr_time
 
     print(f'Arrived at {end_stop} at {cur_arr_time}')
-    print(f'Travel took {time / 60} minutes')
 
 # Get all edges leading to the goal
 def get_edges(path):
