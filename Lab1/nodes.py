@@ -8,9 +8,11 @@ Every edge is the best possible connection from the node to another node
 class Node:
     ALL_CONNECTIONS_DF = None
 
-    def __init__(self, stop, arr_time):
+    def __init__(self, stop, arr_time, line_arrived=None):
         self.stop = stop
         self.arr_time = arr_time
+        # Line from which we arrived to the given node
+        self.line_arrived = line_arrived
         self.edges = []
 
     def generate_edges(self, optimalization_criteria='t'):
@@ -38,7 +40,7 @@ class Node:
             text += "\n"
         return text
     
-    # Filler method - only used to avoid heapq crash
+    # Filler method - only used to avoid heapq crash in dijkstra
     def __gt__(self, other):
         return True
 
