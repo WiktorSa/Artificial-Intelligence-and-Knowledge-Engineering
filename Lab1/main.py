@@ -31,10 +31,11 @@ def task1c(start_stop, end_stop, arrival_time):
     start_node = Node(start_stop, arrival_time)
 
     cost, path = get_shortest_path_astar_stops(start_node, end_stop)
-    #print_results(start_stop, arrival_time, path, end_stop)
+
+    print_results(start_stop, arrival_time, path, end_stop)
     #print(f'Cost: {cost}')
     #draw_results(all_connections, path)
 
 
 if __name__ == "__main__":
-    task1a("żar", "klecina", datetime.strptime("8:00:00", "%H:%M:%S").time())
+    task1c("żar", "leśnica", datetime.strptime("8:00:00", "%H:%M:%S").time())

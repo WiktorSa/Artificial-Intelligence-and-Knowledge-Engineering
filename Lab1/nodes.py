@@ -9,9 +9,11 @@ Every edge is the best possible connection from the node to another node
 class Node:
     ALL_CONNECTIONS_DF = None
 
-    def __init__(self, stop, arr_time):
+    def __init__(self, stop, arr_time, line_arr=None):
         self.stop = stop
         self.arr_time = arr_time
+        # Which line was used to arrive at the given stop
+        self.line_arr = line_arr
         self.edges = []
         self.stop_location = self.get_location()
 
@@ -23,7 +25,9 @@ class Node:
             
             # line priority means that the given line will be prioritised when deciding on connection from one stop to another
             if line_prioritised:
-                df = df.sort_values(by='line', key=lambda x: 0 if x == line_prioritised else 1)
+                given_line_df = df[df['line'] == line_prioritised]
+                other_lines_df = df[df['line'] != line_prioritised]
+                df = pd.concat([given_line_df, other_lines_df])
             
             df = df.drop_duplicates(subset=['end_stop'])
 
@@ -42,6 +46,10 @@ class Node:
             lon = df['end_stop_lon'].mean()
 
         return (lat, lon)
+    
+    # Method used for debugging connections
+    def get_stop_info(self):
+        return f'Stop {self.stop} arrived at {self.arr_time}\n'
                 
     def __str__(self):
         text = f'Stop {self.stop} arrived at {self.arr_time}\n'
