@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 def print_results(start_stop, arrival_time, path, end_stop):
     edges = get_edges(path)
     connections = get_connections(edges)
@@ -51,3 +53,30 @@ class Connection:
 
     def __str__(self):
         return f'Travel with line {self.line} from {self.start_stop} to {self.end_stop} from {self.depart_time} to {self.arr_time}'
+    
+
+def draw_results(all_connections, path):
+    plt.figure(figsize=(24, 18), dpi=80)
+    plt.title("Connection")
+    draw_all_stops(all_connections)
+    draw_path(path)
+    plt.show()
+
+
+# To avoid multiple dots for one stop we assume that there will be only one location for every stop
+def draw_all_stops(all_connections):
+    all_connections = all_connections.drop_duplicates(subset=['end_stop'])
+    plt.scatter(all_connections['end_stop_lon'], all_connections['end_stop_lat'], s=10)
+
+# There may be a very slight disconnect between the path and stops because of different measurements
+def draw_path(path):
+    x = []
+    y = []
+
+    for conn in path:
+        lat, lon = conn.stop_location
+        x.append(lon)
+        y.append(lat)
+
+    plt.plot(x, y, linewidth=3, c='green')
+    plt.scatter(x, y, s=20, c='red')
