@@ -21,6 +21,8 @@ def tabu_search(stops):
         for j in range(n_stops):
             total += distances[i][j]
 
+    aspiration_criteria = (total / (n_stops ** 2)) * 2.2
+
     current_solution = list(range(n_stops))
     random.shuffle(current_solution)
     best_solution = current_solution[:]
@@ -38,7 +40,7 @@ def tabu_search(stops):
                 neighbor = current_solution[:]
                 neighbor[i], neighbor[j] = neighbor[j], neighbor[i]
                 neighbor_cost = sum([distances[neighbor[i]][neighbor[(i+1)%n_stops]] for i in range(n_stops)])
-                if (i, j) not in tabu_list:
+                if (i, j) not in tabu_list or neighbor_cost < aspiration_criteria:
                     if neighbor_cost < best_neighbor_cost:
                         best_neighbor = neighbor[:]
                         best_neighbor_cost = neighbor_cost
