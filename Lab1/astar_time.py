@@ -39,19 +39,18 @@ def astar_time(start_node, end_node, neighbors_fn):
         # Avoid crash when arriving to Zorawina
         if curr_node.stop in neighbors_fn.graph_dict:
             for neighbor in neighbors_fn.graph_dict[curr_node.stop]:
-                new_cost = cost_so_far[curr_node.stop] + time_cost(curr_node, neighbor)
-                if new_cost < cost_so_far[neighbor.stop]:
-                    cost_so_far[neighbor.stop] = new_cost
-                    priority = new_cost + manhattan_heuristic(neighbor, end_node)
-                    heapq.heappush(front, (priority, neighbor))
-                    came_from[neighbor] = curr_node
+                # Avoid cases when neighbor gets negative time
+                if curr_node.arr_time <= neighbor.arr_time:
+                    new_cost = cost_so_far[curr_node.stop] + time_cost(curr_node, neighbor)
+                    if new_cost < cost_so_far[neighbor.stop]:
+                        cost_so_far[neighbor.stop] = new_cost
+                        priority = new_cost + manhattan_heuristic(neighbor, end_node)
+                        heapq.heappush(front, (priority, neighbor))
+                        came_from[neighbor] = curr_node
 
 
 def time_cost(curr_node, neighbor):
     time = convert_to_seconds(neighbor.arr_time) - convert_to_seconds(curr_node.arr_time)
-    # To avoid cases with negative time we add a punishment of one day to the score
-    if time < 0:
-        time += 24 * 60 * 60
     return time 
 
 

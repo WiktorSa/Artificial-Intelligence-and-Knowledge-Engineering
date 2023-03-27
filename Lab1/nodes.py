@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pandas as pd
 import numpy as np
 
@@ -8,6 +10,8 @@ Every edge is the best possible connection from the node to another node
 
 class Node:
     ALL_CONNECTIONS_DF = None
+    # Which lines arrive to the end
+    LINES_TO_END = None
 
     def __init__(self, stop, arr_time, line_arr=None):
         self.stop = stop
@@ -26,8 +30,15 @@ class Node:
             # line priority means that the given line will be prioritised when deciding on connection from one stop to another
             if line_prioritised:
                 given_line_df = df[df['line'] == line_prioritised]
+                # Other lines will be separated into those that arrive to the end goal and those that do not
                 other_lines_df = df[df['line'] != line_prioritised]
-                df = pd.concat([given_line_df, other_lines_df])
+
+                if self.LINES_TO_END != []:
+                    lines_going_to_end = other_lines_df[other_lines_df['line'].isin(Node.LINES_TO_END)]
+                    lines_not_going_to_end = other_lines_df[~other_lines_df['line'].isin(Node.LINES_TO_END)]
+                    df = pd.concat([given_line_df, lines_going_to_end, lines_not_going_to_end])
+                else:
+                    df = pd.concat([given_line_df, other_lines_df])
             
             df = df.drop_duplicates(subset=['end_stop'])
 
@@ -50,6 +61,10 @@ class Node:
     # Method used for debugging connections
     def get_stop_info(self):
         return f'Stop {self.stop} arrived at {self.arr_time}\n'
+    
+    @staticmethod
+    def set_lines_arriving_to_end(stop):
+        Node.LINES_TO_END = Node.ALL_CONNECTIONS_DF[Node.ALL_CONNECTIONS_DF['end_stop'] == stop]['line'].unique()
                 
     def __str__(self):
         text = f'Stop {self.stop} arrived at {self.arr_time}\n'
@@ -75,7 +90,7 @@ class Node:
             return f'Line: {self.line}, Departure time: {self.depart_time}, Arrival time: {self.arr_time}, Start: {self.start_stop}, End: {self.end_stop}'
 
 
-def setup_data(arr_time, filename="connection_graph.csv"):
+def setup_data(arr_time, filename="connection_graph.csv", remove_night_routes=False):
     df = pd.read_csv(filename, dtype=object, encoding='utf8')
     df.drop(['Unnamed: 0.1', 'Unnamed: 0', 'company'], axis=1, inplace=True)
     df.loc[df['line'] == 'C ', 'line'] = 'C'
@@ -89,7 +104,11 @@ def setup_data(arr_time, filename="connection_graph.csv"):
     df['end_stop_lon'] = df['end_stop_lon'].map(lambda x: float(x))
 
     # Sorting values by time to quickly get the quickest connection
-    all_possible_connections = df[(df['departure_time'] >= arr_time)]
+    all_possible_connections = df[df['departure_time'] >= arr_time]
+    if remove_night_routes:
+        all_possible_connections = all_possible_connections[all_possible_connections['departure_time'] <= datetime.strptime("22:00:00", "%H:%M:%S").time()]
+    # Removing routes from the same stops
+    all_possible_connections = all_possible_connections[all_possible_connections['start_stop'] != all_possible_connections['end_stop']]
     # Sorting values by time to quickly get the quickest connection
     all_possible_connections = all_possible_connections.sort_values(['departure_time', 'arrival_time'])
 
