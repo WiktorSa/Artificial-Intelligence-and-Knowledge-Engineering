@@ -12,7 +12,6 @@ def tabu_search(stops):
     improve_thresh = 2 * math.floor(math.sqrt(max_iterations))
 
     tabu_list = []
-    tabu_tenure = n_stops
 
     distances = [[distance(stops[i], stops[j]) for i in range(n_stops)] for j in range(n_stops)]
 
@@ -47,8 +46,6 @@ def tabu_search(stops):
         if best_neighbor is not None:
             current_solution = best_neighbor[:]
             tabu_list.append(tabu_candidate)
-            if len(tabu_list) > tabu_tenure:
-                tabu_list.pop(0)
             if best_neighbor_cost < best_solution_cost:
                 best_solution = best_neighbor[:]
                 best_solution_cost = best_neighbor_cost

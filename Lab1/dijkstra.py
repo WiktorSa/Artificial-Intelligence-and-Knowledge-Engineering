@@ -9,6 +9,9 @@ class Graph:
         self.graph_dict = {}
 
     def add_neighbour_nodes(self, node):
+        # Delete nodes to insure than only connections from the given node will be analysed
+        if node.stop in self.graph_dict:
+            del self.graph_dict[node.stop]
         # We only make path in one way because path in another way is not the same!
         for edge in node.edges:
             # Weight is the number of seconds it takes from going from one stop to another

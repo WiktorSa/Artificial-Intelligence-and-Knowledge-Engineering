@@ -10,6 +10,9 @@ class Graph:
         self.graph_dict = {}
 
     def add_neighbour_nodes(self, node):
+        # Delete nodes to insure than only connections from the given node will be analysed
+        if node.stop in self.graph_dict:
+            del self.graph_dict[node.stop]
         # We only make path in one way because path in another way is not the same!
         for edge in node.edges:
             if edge.start_stop in self.graph_dict:
@@ -52,11 +55,7 @@ def astar_stops(start_node, end_node, neighbors_fn):
 # To ensure no extra line changes we will add extra punishment for any line change
 def time_cost(curr_node, neighbor):
     time = convert_to_seconds(neighbor.arr_time) - convert_to_seconds(curr_node.arr_time)
-    # To avoid cases with negative time we add a punishment of one day to the score
-    if time < 0:
-        time += 24 * 60 * 60
-
-    extra_cost = 0 if curr_node.line_arr == neighbor.line_arr else 100000
+    extra_cost = 0 if curr_node.line_arr == neighbor.line_arr else 10000
     return time + extra_cost
 
 # First follow the line

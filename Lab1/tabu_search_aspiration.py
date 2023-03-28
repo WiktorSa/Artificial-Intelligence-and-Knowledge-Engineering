@@ -2,7 +2,7 @@ import random
 import math
 
 
-def tabu_search(stops):
+def tabu_search_aspiration(stops):
     random.seed(121)
 
     n_stops = len(stops)
