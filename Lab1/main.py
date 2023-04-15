@@ -237,7 +237,7 @@ def task2d(start_stop, optimalization_criteria, arrival_time,  *list_stops):
 
     
 if __name__ == "__main__":
-    task1b("leśnica", "wojnów", datetime.strptime("10:00:00", "%H:%M:%S").time())
-    # task1b("kwiska", "pl. grunwaldzki", datetime.strptime("10:00:00", "%H:%M:%S").time())
+    # task1d("kwiska", "wojnów", datetime.strptime("10:00:00", "%H:%M:%S").time())
+    # task1b("hallera", "dworzec główny", datetime.strptime("10:00:00", "%H:%M:%S").time())
     # task2d('pilczyce', 's', datetime.strptime("8:00:00", "%H:%M:%S").time(), 'zakrzów', 'leśnica', 'kromera', 'biskupin', 'krzyki')
-    # task2a('leśnica', 't', datetime.strptime("8:00:00", "%H:%M:%S").time(), 'pl. grunwaldzki', 'klecina', 'racławicka', 'oporów')
+    task2d('leśnica', 's', datetime.strptime("8:00:00", "%H:%M:%S").time(), 'pl. grunwaldzki', 'klecina', 'racławicka', 'oporów')
