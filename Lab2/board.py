@@ -36,7 +36,10 @@ class Board:
             if self._is_move_possible(player, index):
                 all_possible_moves.append(index)
         
-        # Sometimes player cannot make a move - a array with None value will express it
+        # Sometimes player cannot make a move - an array with None value will express it
+        if not all_possible_moves:
+            all_possible_moves.append(None)
+
         return all_possible_moves
     
     def _is_move_possible(self, player, cell_location):
@@ -98,7 +101,7 @@ class Board:
     def can_move_be_made(self):
         first_player_moves = self.get_all_possible_moves(Players.FIRST_PLAYER)
         second_player_moves = self.get_all_possible_moves(Players.SECOND_PLAYER)
-        return first_player_moves != [] or second_player_moves != []
+        return first_player_moves != [None] or second_player_moves != [None]
 
     def __str__(self):
         board_str = ""

@@ -43,11 +43,11 @@ def main(board_str):
         win_player = 'Player2'
 
     # Printing results
-    #print(board)
-    #print(f'No turns: {no_turn}, Winning Player: {win_player}')
-    #print(f'Number of visited nodes for Player1: {first_player.no_visited_nodes}')
-    #print(f'Number of visited nodes for Player2: {second_player.no_visited_nodes}')
-    #print(f'Length of the game: {end_time - start_time:.2f} seconds')
+    print(board)
+    print(f'No turns: {no_turn}, Winning Player: {win_player}')
+    print(f'Number of visited nodes for Player1: {first_player.no_visited_nodes}')
+    print(f'Number of visited nodes for Player2: {second_player.no_visited_nodes}')
+    print(f'Length of the game: {end_time - start_time:.2f} seconds')
 
 if __name__ == '__main__':
     main(test_board)

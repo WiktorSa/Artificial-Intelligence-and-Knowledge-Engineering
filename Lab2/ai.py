@@ -32,18 +32,20 @@ class AI:
         if self.algorithm == 'minimax':
             for move in board.get_all_possible_moves(self.player):
                 new_board = copy.deepcopy(board)
-                new_board.make_move(self.player, move)
+                if move:
+                    new_board.make_move(self.player, move)
                 value = self.minimax(new_board, self.max_tree_depth-1, False)
                 if value > best_value or best_move is None:
                     best_move = move
                     best_value = value
 
-        # Algorithm can be simplified because beta will never change in this scenario
+        # Algorithm can be simplified because beta will never change in this iteration
         elif self.algorithm == 'alphabeta':
             alpha = float('-inf')
             for move in board.get_all_possible_moves(self.player):
                 new_board = copy.deepcopy(board)
-                new_board.make_move(self.player, move)
+                if move:
+                    new_board.make_move(self.player, move)
                 value = self.alphabeta(new_board, self.max_tree_depth-1, alpha, float('inf'), False)
                 if value > best_value or best_move is None:
                     best_move = move
@@ -62,14 +64,16 @@ class AI:
             value = float('-inf')
             for move in board.get_all_possible_moves(self.player):
                 new_board = copy.deepcopy(board)
-                new_board.make_move(self.player, move)
+                if move:
+                    new_board.make_move(self.player, move)
                 value = max(value, self.minimax(new_board, depth-1, False))
             return value
         else:
             value = float('inf')
             for move in board.get_all_possible_moves(self.enemy_player):
                 new_board = copy.deepcopy(board)
-                new_board.make_move(self.enemy_player, move)
+                if move:
+                    new_board.make_move(self.enemy_player, move)
                 value = min(value, self.minimax(new_board, depth-1, True))
             return value
 
@@ -83,7 +87,8 @@ class AI:
             value = float('-inf')
             for move in board.get_all_possible_moves(self.player):
                 new_board = copy.deepcopy(board)
-                new_board.make_move(self.player, move)
+                if move:
+                    new_board.make_move(self.player, move)
                 value = max(value, self.alphabeta(new_board, depth-1, alpha, beta, False))
                 alpha = max(alpha, value)
                 if alpha >= beta:
@@ -93,7 +98,8 @@ class AI:
             value = float('inf')
             for move in board.get_all_possible_moves(self.enemy_player):
                 new_board = copy.deepcopy(board)
-                new_board.make_move(self.enemy_player, move)
+                if move:
+                    new_board.make_move(self.enemy_player, move)
                 value = min(value, self.alphabeta(new_board, depth-1, alpha, beta, True))
                 beta = min(beta, value)
                 if beta <= alpha:
