@@ -3,3 +3,5 @@ Uwzględnij sortowanie drzewa jeżeli chcesz
 Heurystyka 1 - liczba pionków gracza - liczba pionków wroga
 Heurystyka 2 - maksymalizacja liczby tzw. stabilnych pionów (czyli pionów, które nie mogą zostać przejęte)
 Heurystyka 3 - do przemyslenia
+
+TO DO - przemysl heurystyke
