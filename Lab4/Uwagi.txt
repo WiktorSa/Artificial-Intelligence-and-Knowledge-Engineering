@@ -1,0 +1,3 @@
+Dodaj histogramy do danych
+Dodaj wykresy korelacji
+Dodaj heatmapa

@@ -1,0 +1,116 @@
+% Atomy
+mikrofalowka.
+dom.
+rzecz.
+opakowanie.
+
+panel_sterowania.
+lacznik.
+prowadnica_krazkowa.
+szklana_taca.
+drzwi.
+przewod_zasilajacy.
+
+bezpiecznik.
+przelacznik.
+gniazdko.
+
+pierogi.
+woda.
+kurczak.
+odziez.
+
+folia.
+woreczek.
+torba.
+
+% Fakty (niezmienne)
+ma(mikrofalowka, panel_sterowania).
+ma(mikrofalowka, lacznik).
+ma(mikrofalowka, prowadnica_krazkowa).
+ma(mikrofalowka, szklana_taca).
+ma(mikrofalowka, drzwi).
+ma(mikrofalowka, przewod_zasilajacy).
+ma(dom, bezpiecznik).
+ma(dom, przelacznik).
+ma(dom, gniazdko).
+
+jest(rzecz, pierogi).
+jest(rzecz, woda).
+jest(rzecz, kurczak).
+jest(rzecz, odziez).
+jest(opakowanie, folia).
+jest(opakowanie, woreczek).
+jest(opakowanie, torba).
+
+wylacza_prad(bezpiecznik).
+wylacza_prad(przelacznik).
+
+jest_podlaczone_do(przewod_zasilajacy, gniazdko).
+
+bezpieczne(pierogi).
+bezpieczne(woda).
+bezpieczne(kurczak).
+bezpieczne(folia).
+bezpieczne(woreczek).
+
+% Reguły dotyczące gotowania
+mozna_gotowac(X) :- 
+    jest(rzecz, X), 
+    bezpieczne(X).
+
+mozna_uzywac(X) :-
+    jest(opakowanie, X), 
+    bezpieczne(X).
+
+mozna_podgrzewac_w_mikrofali(X, Y) :-
+    mozna_gotowac(X),
+    mozna_uzywac(Y).
+
+% Reguły dotyczące działania mikrofalówki
+podlaczone_urzadzenie(X) :-
+    ma(X, Y),
+    jest_podlaczone_do(Y, _).
+
+bezpieczne_korzystanie_z_mikrofalowki(X, Y, Z) :-
+    podlaczone_urzadzenie(X),
+    gotowane(X, Y, Z),
+    mozna_podgrzewac_w_mikrofali(Y, Z).
+
+niebezpieczne_korzystanie_z_mikrofalowki(X, Y, Z) :-
+    podlaczone_urzadzenie(X),
+    gotowane(X, Y, Z),
+    \+ mozna_podgrzewac_w_mikrofali(Y, Z).
+
+% Awarie
+problem_z_przewodem(X, Y) :-
+    ma(X, Y),
+    jest_podlaczone_do(Y, _),
+    nie_dziala(Y).
+
+problem_z_gniazdkiem(X, Y, Z) :-
+    ma(X, Y),
+    jest_podlaczone_do(Y, Z),
+    nie_dziala(Z).
+    
+brak_pradu(X, Y) :-
+    podlaczone_urzadzenie(X),
+    wylacza_prad(Y),
+    wlaczone(Y).
+
+kuchenka_nie_grzeje(X, Y) :-
+    podlaczone_urzadzenie(X),
+    ma(X, Y),
+    otwarte(Y).
+
+czy_jest_awaria(A, B, C, D, E) :-
+    problem_z_przewodem(A, B);
+    problem_z_gniazdkiem(A, B, C);
+    brak_pradu(A, D);
+    kuchenka_nie_grzeje(A, E).
+
+% Fakty (w zależności od sytuacji mogą być inne)
+gotowane(mikrofalowka, pierogi, pierogi).
+nie_dziala(gniazdko).
+wlaczone(bezpiecznik).
+otwarte(drzwi).

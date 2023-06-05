@@ -6,26 +6,34 @@ from board import Board
 from ai import AI
 
 def main(board_str):
-    POSSIBLE_ALGORITHMS = ['minimax', 'alphabeta']
-    POSSIBLE_HEURISTIC = [1, 2, 3]
-    POSSIBLE_MAX_TREE_DEPTH = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    POSSIBLE_ALGORITHMS = ['minimax', 'alphabeta', 'human']
+    POSSIBLE_HEURISTIC = [1, 2, 3, 4, 5]
+    POSSIBLE_MAX_TREE_DEPTH = [1, 2, 3, 4, 5]
 
     board = Board(board_str)
-    first_player = AI(POSSIBLE_ALGORITHMS[1], POSSIBLE_HEURISTIC[0], POSSIBLE_MAX_TREE_DEPTH[3], Players.FIRST_PLAYER, Players.SECOND_PLAYER)
-    second_player = AI(POSSIBLE_ALGORITHMS[1], POSSIBLE_HEURISTIC[1], POSSIBLE_MAX_TREE_DEPTH[3], Players.SECOND_PLAYER, Players.FIRST_PLAYER)
+    first_player = AI(POSSIBLE_ALGORITHMS[1], POSSIBLE_HEURISTIC[1], POSSIBLE_MAX_TREE_DEPTH[2], Players.FIRST_PLAYER, Players.SECOND_PLAYER)
+    second_player = AI(POSSIBLE_ALGORITHMS[2], POSSIBLE_HEURISTIC[0], POSSIBLE_MAX_TREE_DEPTH[2], Players.SECOND_PLAYER, Players.FIRST_PLAYER)
 
     # Playing game
     start_time = time.time()
     no_turn = 0
     cur_player = first_player
+    print("Starting board")
+    print(board)
+    print()
     while board.can_move_be_made:
         if cur_player == first_player:
             no_turn += 1
 
         move = cur_player.predict_next_move(board)
-        # Sometimes player cannot make a move
-        if move:
-            board.make_move(cur_player.player, move)
+        board.make_move(cur_player.player, move)
+
+        display_move = (move[0]+1, move[1]+1) if move else "No move available"
+        print(f'Turn {no_turn}')
+        print(f'Current player: {cur_player.player.value}')
+        print(f'Move: row {display_move[0]}, column {display_move[1]}')
+        print(board)
+        print()
 
         if cur_player == first_player:
             cur_player = second_player
@@ -43,6 +51,7 @@ def main(board_str):
         win_player = 'Player2'
 
     # Printing results
+    print("End results")
     print(board)
     print(f'No turns: {no_turn}, Winning Player: {win_player}')
     print(f'Number of visited nodes for Player1: {first_player.no_visited_nodes}')

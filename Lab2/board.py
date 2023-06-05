@@ -15,6 +15,10 @@ class Board:
         return np.array(board)
 
     def make_move(self, player, cell_location):
+        # Sometimes player cannot make a move because its stuck
+        if not cell_location:
+            return
+
         if self._is_move_possible(player, cell_location):
             self.board[cell_location] = player.value
             for x_direction, y_direction in self._get_all_directions(player, cell_location):
@@ -37,10 +41,7 @@ class Board:
                 all_possible_moves.append(index)
         
         # Sometimes player cannot make a move - an array with None value will express it
-        if not all_possible_moves:
-            all_possible_moves.append(None)
-
-        return all_possible_moves
+        return all_possible_moves if all_possible_moves else [None]
     
     def _is_move_possible(self, player, cell_location):
         # You cannot place a piece on top of another player
@@ -71,7 +72,7 @@ class Board:
 
     def _get_all_directions(self, player, cell_location):
         if player == Players.FIRST_PLAYER:
-                other_player = Players.SECOND_PLAYER
+            other_player = Players.SECOND_PLAYER
         else:
             other_player = Players.FIRST_PLAYER
 
@@ -165,3 +166,20 @@ class Board:
                         return False
 
         return True
+
+    # Determine the number of pons but prioritize certain fields:
+    # 1. If you have a corner than add 10 points
+    # 2. If you have a field in row than add 3 points
+    # 3. Add 1 point for every other occupied field
+    def get_no_pons_priority(self, player):
+        score = 0
+        for index, _ in np.ndenumerate(self.board):
+            if self.board[index] == player.value:
+                if index in [(0, 0), (0, self.BOARD_SIZE-1), (self.BOARD_SIZE-1, 0), (self.BOARD_SIZE-1, self.BOARD_SIZE-1)]:
+                    score += 10
+                elif index[0] == 0 or index[0] == self.BOARD_SIZE-1 or index[1] == 0 or index[1] == self.BOARD_SIZE-1:
+                    score += 3
+                else:
+                    score += 1
+
+        return score
